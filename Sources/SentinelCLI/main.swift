@@ -61,6 +61,27 @@ struct Scan: AsyncParsableCommand {
         }
 
         autoLaunchReportIfNeeded(results: results, format: format, output: output)
+        printCompletionStatus(results: results)
+    }
+
+    private func printCompletionStatus(results: ScanResults) {
+        let green = "\u{001B}[92m"
+        let yellow = "\u{001B}[93m"
+        let red = "\u{001B}[91m"
+        let reset = "\u{001B}[0m"
+
+        let critical = results.allFindings.filter { $0.riskLevel == .critical }.count
+        let high = results.allFindings.filter { $0.riskLevel == .high }.count
+
+        print("")
+        if critical > 0 {
+            print("\(red)✘ SCAN COMPLETE - \(critical) CRITICAL issue(s) require immediate attention!\(reset)")
+        } else if high > 0 {
+            print("\(yellow)⚠ SCAN COMPLETE - \(high) HIGH risk issue(s) found. Review recommended.\(reset)")
+        } else {
+            print("\(green)✔ SCAN COMPLETE - No critical issues found.\(reset)")
+        }
+        print("")
     }
 
     private func printBanner() {

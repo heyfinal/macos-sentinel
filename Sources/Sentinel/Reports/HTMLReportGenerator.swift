@@ -9,9 +9,10 @@ public struct HTMLReportGenerator {
                 let actions = suggestedActions(for: finding)
                 let commandLines = actions.commands.map { "<code>\(escape($0))</code>" }.joined(separator: "<br/>")
                 let linkLines = actions.links.map { "<a href=\"\($0.url)\">\($0.label)</a>" }.joined(separator: " | ")
+                let riskClass = "risk-\(finding.riskLevel.rawValue.lowercased())"
                 return """
                 <div class=\"finding\">
-                  <div class=\"title\">[\(finding.riskLevel.rawValue)] \(escape(finding.title))</div>
+                  <div class=\"title\"><span class=\"\(riskClass)\">[\(finding.riskLevel.rawValue)]</span> \(escape(finding.title))</div>
                   <div class=\"desc\">\(escape(finding.description))</div>
                   <pre>\(escape(finding.evidence))</pre>
                   <div class=\"rem\"><strong>Remediation:</strong> \(escape(finding.remediation))</div>
@@ -37,16 +38,27 @@ public struct HTMLReportGenerator {
         <head>
           <meta charset=\"utf-8\" />
           <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />
-          <title>macOS Sentinel Report</title>
+          <title>McGuardian Report</title>
           <style>
-            body { font-family: -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif; margin: 24px; color: #1b1b1b; }
-            h1 { margin-bottom: 6px; }
-            h2 { margin-top: 24px; }
-            .meta { color: #555; margin-bottom: 24px; }
-            .finding { border: 1px solid #ddd; padding: 12px; margin: 12px 0; border-radius: 8px; }
-            .title { font-weight: 600; margin-bottom: 6px; }
-            pre { background: #f7f7f7; padding: 8px; overflow-x: auto; }
-            code { background: #f7f7f7; padding: 2px 4px; border-radius: 4px; }
+            body { font-family: -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif; margin: 24px; background: #1a1a2e; color: #eaeaea; }
+            h1 { margin-bottom: 6px; color: #00d4ff; }
+            h2 { margin-top: 24px; color: #00d4ff; border-bottom: 1px solid #333; padding-bottom: 8px; }
+            .meta { color: #888; margin-bottom: 24px; }
+            .finding { border: 1px solid #333; padding: 12px; margin: 12px 0; border-radius: 8px; background: #16213e; }
+            .finding:hover { border-color: #00d4ff; }
+            .title { font-weight: 600; margin-bottom: 6px; color: #fff; }
+            .desc { color: #ccc; margin-bottom: 8px; }
+            .rem { color: #aaa; margin-top: 8px; }
+            .rem strong { color: #00d4ff; }
+            pre { background: #0f0f23; padding: 12px; overflow-x: auto; border-radius: 6px; color: #0f0; font-size: 13px; }
+            code { background: #0f0f23; padding: 2px 6px; border-radius: 4px; color: #0f0; }
+            a { color: #00d4ff; text-decoration: none; }
+            a:hover { text-decoration: underline; }
+            .risk-critical { color: #ff4757; }
+            .risk-high { color: #ffa502; }
+            .risk-medium { color: #ffdd59; }
+            .risk-low { color: #7bed9f; }
+            .risk-info { color: #70a1ff; }
           </style>
         </head>
         <body>
