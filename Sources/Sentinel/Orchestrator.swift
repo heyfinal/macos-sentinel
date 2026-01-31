@@ -31,20 +31,20 @@ public final class ScanOrchestrator {
 
     public func runFullScan(quick: Bool, includeML: Bool) async throws -> ScanResults {
         var categories: [ScanCategory] = []
-        let debug = ProcessInfo.processInfo.environment["SENTINEL_DEBUG"] == "1"
+        let total = modules.count
 
-        for module in modules {
-            let start = Date()
-            if debug {
-                print("Starting module: \(module.name)")
-            }
+        for (index, module) in modules.enumerated() {
+            let progress = "[\(index + 1)/\(total)]"
+            print("\r\u{001B}[K\(progress) Scanning: \(module.name)...", terminator: "")
+            fflush(stdout)
+
             let findings = try await module.run(quick: quick)
-            let duration = Date().timeIntervalSince(start)
-            if debug {
-                print("Finished module: \(module.name) in \(String(format: "%.2fs", duration))")
-            }
             categories.append(ScanCategory(name: module.name, findings: findings))
         }
+
+        // Clear the progress line
+        print("\r\u{001B}[K", terminator: "")
+        fflush(stdout)
 
         if includeML {
             let mlFinding = Finding(
