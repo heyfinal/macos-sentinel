@@ -88,7 +88,7 @@ struct Scan: AsyncParsableCommand {
         if ioctl(STDOUT_FILENO, TIOCGWINSZ, &size) == 0, size.ws_col > 0 {
             let currentCols = Int(size.ws_col)
             let currentRows = Int(size.ws_row)
-            let targetCols = min(Int(Double(currentCols) * 1.2), 400)
+            let targetCols = 95  // Fixed width to fit ASCII banner (87 chars + margin)
             if targetCols > currentCols {
                 print("\u{001B}[8;\(currentRows);\(targetCols)t", terminator: "")
             }
