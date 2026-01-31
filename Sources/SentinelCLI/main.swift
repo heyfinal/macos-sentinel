@@ -1,5 +1,4 @@
 import Foundation
-import Darwin
 import ArgumentParser
 import Sentinel
 
@@ -65,34 +64,17 @@ struct Scan: AsyncParsableCommand {
     }
 
     private func printBanner() {
-        adjustTerminalWidth()
         let lightBlue = "\u{001B}[96m"
         let reset = "\u{001B}[0m"
-        let banner = [
-            "                                                                       ,,    ,,",
-            "`7MMM.     ,MMF'          .g8\"\"\"bgd                                  `7MM    db",
-            "  MMMb    dPMM          .dP'     `M                                    MM",
-            "  M YM   ,M MM  ,p6\"bo  dM'       ``7MM  `7MM   ,6\"Yb.  `7Mb,od8  ,M\"\"bMM  `7MM   ,6\"Yb.  `7MMpMMMb.",
-            "  M  Mb  M' MM 6M'  OO  MM           MM    MM  8)   MM    MM' \"',AP    MM    MM  8)   MM    MM    MM",
-            "  M  YM.P'  MM 8M       MM.    `7MMF'MM    MM   ,pm9MM    MM    8MI    MM    MM   ,pm9MM    MM    MM",
-            "  M  `YM'   MM YM.    , `Mb.     MM  MM    MM  8M   MM    MM    `Mb    MM    MM  8M   MM    MM    MM",
-            ".JML. `'  .JMML.YMbmd'    `\"bmmmdPY  `Mbod\"YML.`Moo9^Yo..JMML.   `Wbmd\"MML..JMML.`Moo9^Yo..JMML  JMML.",
-            "",
-            "                             McGuardian • macOS Security Analyzer"
-        ].joined(separator: "\n")
-        print("\(lightBlue)\(banner)\(reset)")
-    }
+        let banner = """
+        ▗▖  ▗▖▗▞▀▘ ▗▄▄▖█  ▐▌▗▞▀▜▌ ▄▄▄ ▐▌▄ ▗▞▀▜▌▄▄▄▄
+        ▐▛▚▞▜▌▝▚▄▖▐▌   ▀▄▄▞▘▝▚▄▟▌█    ▐▌▄ ▝▚▄▟▌█   █
+        ▐▌  ▐▌    ▐▌▝▜▌          █ ▗▞▀▜▌█      █   █
+        ▐▌  ▐▌    ▝▚▄▞▘            ▝▚▄▟▌█
 
-    private func adjustTerminalWidth() {
-        var size = winsize()
-        if ioctl(STDOUT_FILENO, TIOCGWINSZ, &size) == 0, size.ws_col > 0 {
-            let currentCols = Int(size.ws_col)
-            let currentRows = Int(size.ws_row)
-            let targetCols = 95  // Fixed width to fit ASCII banner (87 chars + margin)
-            if targetCols > currentCols {
-                print("\u{001B}[8;\(currentRows);\(targetCols)t", terminator: "")
-            }
-        }
+              macOS Security Analyzer
+        """
+        print("\(lightBlue)\(banner)\(reset)")
     }
 
     private func write(data: Data, to output: String?) throws {
